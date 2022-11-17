@@ -1,27 +1,32 @@
 import { Button, Form, Input } from 'antd'
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom';
 import { userLogIn, userSignUp } from '../Redux/Auth/actions';
-import { USER_SIGN_UP_SUCCESS } from '../Redux/Auth/actionTypes';
+import { USER_LOG_IN_SUCCESS, USER_LOG_OUT_SUCCESS, USER_SIGN_UP_SUCCESS } from '../Redux/Auth/actionTypes';
 
 const Signup = () => {
     const dispatch = useDispatch();
-
-
+    const navigate = useNavigate();
     const success = (value) => {
         console.log(value);
         dispatch(userSignUp({
-            username: value.username,
+            email: value.email,
             name: value.name,
             password: value.password
-        })).then(r => {
-            if (r.type === USER_SIGN_UP_SUCCESS) {
-                dispatch(userLogIn({
-                    username: value.username,
-                    password: value.password
-                }));
-            }
-        })
+        }))
+            .then(r => {
+                if (r.type === USER_SIGN_UP_SUCCESS) {
+                    dispatch(userLogIn({
+                        email: value.email,
+                        password: value.password
+                    })).then(r => {
+                        if (r.type === USER_LOG_IN_SUCCESS) {
+                            navigate("/");
+                        }
+                    })
+                }
+            })
     }
     const failure = (value) => {
         console.log(value);
@@ -48,7 +53,7 @@ const Signup = () => {
             <Form.Item
                 label="Email"
                 name="email"
-                rules={[{ required: true, message: 'Email is required.' }]}
+                rules={[{ required: true, message: 'Email is required.' }, { type: 'email', message: 'Invalid email address.' }]}
             >
                 <Input placeholder='Enter your email' />
             </Form.Item>

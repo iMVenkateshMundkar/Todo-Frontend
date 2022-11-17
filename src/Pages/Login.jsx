@@ -2,10 +2,19 @@ import React, { useState } from 'react'
 import { Form, Input, Button, Checkbox } from 'antd'
 import 'antd/dist/antd.css'
 import FormItem from 'antd/es/form/FormItem';
+import { useDispatch } from 'react-redux';
+import { userLogIn } from '../Redux/Auth/actions';
+import { USER_LOG_IN_SUCCESS } from '../Redux/Auth/actionTypes';
+import { useNavigate } from 'react-router-dom';
 const Login = () => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     const success = (value) => {
-        setUserName(value.username);
-        setPassword(value.password);
+        dispatch(userLogIn(value)).then(r => {
+            if (r.type === USER_LOG_IN_SUCCESS) {
+                navigate("/");
+            }
+        })
     }
 
     const failure = (value) => {
@@ -28,7 +37,7 @@ const Login = () => {
             <Form.Item
                 label="Email"
                 name="email"
-                rules={[{ required: true, message: 'Email is required.' }]}
+                rules={[{ required: true, message: 'Email is required.' }, { type: 'email', message: 'Invalid email address' }]}
             >
                 <Input placeholder='Enter your email' />
             </Form.Item>
