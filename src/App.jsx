@@ -13,14 +13,17 @@ function App() {
       <Route exact path='/' element={
         // <RequireAuth>
         <>
-          {/* <Navbar /> */}
+          <Navbar />
           <Home />
         </>
         // </RequireAuth>
       } />
       <Route exact path='/tasks/:id' element={
         // <RequireAuth>
-        <SingleTask />
+        <>
+          <Navbar />
+          <SingleTask />
+        </>
         // </RequireAuth>
       } />
       <Route exact path='/login' element={<Login />} />

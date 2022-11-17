@@ -7,15 +7,18 @@ import { useDispatch, useSelector } from 'react-redux'
 import { addTask, deleteOneTaskById, getAllTasks, updateOneTaskById } from '../Redux/App/actions'
 import { useNavigate } from 'react-router-dom'
 import { ADD_TASK_SUCCESS, DELETE_TASK_BY_ID_SUCCESS, UPDATE_TASK_BY_ID_SUCCESS } from '../Redux/App/actionTypes'
+// import { useForm } from 'antd/lib/form/Form'
 
 const Home = () => {
     const [addNewTask, setAddNewTask] = useState(false);
     const [updateTask, setUpdateTask] = useState(false);
     const [taskForUpdate, setTaskForUpdate] = useState({});
     const { allTasks, isLoading } = useSelector(state => state.app);
+    const { userId } = useSelector(state => state.auth);
     const buttonRef = useRef(null);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const [form] = Form.useForm();
 
     const handleOpenModel = (cb) => {
         cb(true);
@@ -31,17 +34,22 @@ const Home = () => {
     const handleAddNewTask = (value) => {
         setAddNewTask(false);
         let startDate = new Date();
-        let expiryDate = value.expiryDate._d;
-        startDate = changeDateType(startDate);
-        expiryDate = changeDateType(expiryDate);
-        value.expiryDate = expiryDate;
-        value.startDate = startDate;
         console.log(value);
-        dispatch(addTask(value)).then(r => {
-            if (r.type === ADD_TASK_SUCCESS) {
-                dispatch(getAllTasks());
-            }
-        })
+        // let expiryDate = value.expiryDate._d;
+        // startDate = changeDateType(startDate);
+        // expiryDate = changeDateType(expiryDate);
+        // value.expiryDate = expiryDate;
+        // value.startDate = startDate;
+        // value.userId = userId;
+        // console.log(value);
+        // dispatch(addTask(value)).then(r => {
+        //     if (r.type === ADD_TASK_SUCCESS) {
+        //         dispatch(getAllTasks(userId));
+        //     }
+        // })
+        // console.log("Before", value);
+        // form.resetFields();
+        // console.log("After", value);
     }
 
     const handleUpdateTask = (value) => {
@@ -49,7 +57,7 @@ const Home = () => {
         value.expiryDate = changeDateType(value.expiryDate._d);
         dispatch(updateOneTaskById(taskForUpdate._id, value)).then(r => {
             if (r.type === UPDATE_TASK_BY_ID_SUCCESS) {
-                dispatch(getAllTasks());
+                dispatch(getAllTasks(userId));
             }
         })
     }
@@ -57,7 +65,7 @@ const Home = () => {
     const handleDeleteTask = (taskId) => {
         dispatch(deleteOneTaskById(taskId)).then(r => {
             if (r.type === DELETE_TASK_BY_ID_SUCCESS) {
-                dispatch(getAllTasks());
+                dispatch(getAllTasks(userId));
             }
         })
     }
@@ -72,7 +80,7 @@ const Home = () => {
 
     useEffect(() => {
         if (allTasks?.length === 0)
-            dispatch(getAllTasks());
+            dispatch(getAllTasks(userId));
     }, [allTasks?.length])
 
     if (allTasks[0]) {
@@ -93,6 +101,7 @@ const Home = () => {
                 title="Update Task"
                 open={updateTask}
                 onOk={handleCloseModal}
+                form={form}
                 onCancel={() => handleCancel(setUpdateTask)}
                 footer={
                     [
@@ -105,6 +114,7 @@ const Home = () => {
                     labelCol={{ span: 5 }}
                     wrapperCol={{ span: 18 }}
                     width="100%"
+                    form={form}
                     onFinish={handleUpdateTask}
                 >
                     <Space
@@ -159,6 +169,7 @@ const Home = () => {
                     labelCol={{ span: 5 }}
                     wrapperCol={{ span: 18 }}
                     width="100%"
+                    form={form}
                     onFinish={handleAddNewTask}
                 >
                     <Space
@@ -170,12 +181,14 @@ const Home = () => {
                         <Form.Item
                             label="Title"
                             name={"title"}
+                            initialValue={""}
                             rules={[{ required: true, message: "Taks title is required" }]}>
                             <Input placeholder='Title of the task' />
                         </Form.Item>
                         <Form.Item
                             label="Expiry date"
                             name={"expiryDate"}
+                            initialValue={""}
                             rules={[{ required: true, message: "Expiry date is required" }]}
                         >
                             <DatePicker disabledDate={(current) => {
@@ -186,6 +199,7 @@ const Home = () => {
                         <Form.Item
                             label="Description"
                             name={"description"}
+                            initialValue={""}
                             rules={[{ required: true, message: "Taks description is required" }]}
                         >
                             <TextArea placeholder='Enter task description'></TextArea>
@@ -210,6 +224,9 @@ const Home = () => {
                         () => {
                             setTaskForUpdate(record);
                             setUpdateTask(true);
+                            console.log(record);
+                            form.setFieldsValue({ description: record.description, title: record.title });
+                            // form.setFields
                         }
                     } >Update</Button>)} />
                     <Column title="View" key="view" render={(record) => (<Button onClick={

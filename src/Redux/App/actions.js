@@ -5,18 +5,18 @@ export const addTask = (taskDetails) => async (dispatch) => {
     dispatch({ type: actionTypes.ADD_TASK_REQUEST });
     return await axios({
         method: 'post',
-        url: '/tasks',
+        url: `/tasks`,
         baseURL: 'http://localhost:3000',
         data: taskDetails
     }).then(r => dispatch({ type: actionTypes.ADD_TASK_SUCCESS }))
         .catch(err => dispatch({ type: actionTypes.ADD_TASK_FAILURE }));
 }
 
-export const getAllTasks = () => async (dispatch) => {
+export const getAllTasks = (userId) => async (dispatch) => {
     dispatch({ type: actionTypes.GET_ALL_TASKS_REQUEST });
     return await axios({
         method: 'get',
-        url: '/tasks',
+        url: `/tasks/users/${userId}`,
         baseURL: 'http://localhost:3000'
     }).then(r => dispatch({ type: actionTypes.GET_ALL_TASKS_SUCCESS, payload: r.data.data }))
         .catch(e => dispatch({ type: actionTypes.GET_ALL_TASKS_FAILURE }));
@@ -43,7 +43,6 @@ export const deleteOneTaskById = (taskId) => async (dispatch) => {
 }
 
 export const updateOneTaskById = (taskId, taskDetails) => async (dispatch) => {
-    console.log(taskId, taskDetails);
     dispatch({ type: actionTypes.UPDATE_TASK_BY_ID_REQUEST });
     return await axios({
         method: 'put',
