@@ -5,12 +5,15 @@ import FormItem from 'antd/es/form/FormItem';
 import { useDispatch } from 'react-redux';
 import { userLogIn } from '../Redux/Auth/actions';
 import { USER_LOG_IN_SUCCESS } from '../Redux/Auth/actionTypes';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 const Login = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const location = useLocation();
+    console.log("Login", location);
     const success = (value) => {
         dispatch(userLogIn(value)).then(r => {
+            console.log(r);
             if (r.type === USER_LOG_IN_SUCCESS) {
                 navigate("/");
             }

@@ -15,7 +15,6 @@ export const reducer = (state = initialState, { type, payload }) => {
                 isLoading: true
             }
         case actionTypes.GET_ALL_TASKS_SUCCESS:
-            console.log(payload);
             return {
                 ...state,
                 isLoading: false,

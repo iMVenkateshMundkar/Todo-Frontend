@@ -1,6 +1,8 @@
+import { ConsoleSqlOutlined } from "@ant-design/icons";
 import * as actionTypes from "./actionTypes";
 
 const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+console.log(userInfo);
 
 const initialState = {
     isLoading: false,
@@ -37,14 +39,34 @@ export const reducer = (state = initialState, { type, payload }) => {
         case actionTypes.USER_LOG_IN_SUCCESS:
             localStorage.removeItem('userInfo');
             localStorage.setItem('userInfo', JSON.stringify({ _id: payload._id, token: payload.token }));
-            console.log(payload);
             return {
                 ...state,
                 isLoading: false,
                 userId: payload._id,
+                token: payload.token,
                 isLoggedIn: true
             }
         case actionTypes.USER_LOG_IN_FAILURE:
+            return {
+                ...state,
+                isLoading: false,
+                isError: true
+            }
+        case actionTypes.USER_LOG_OUT_REQUEST:
+            return {
+                ...state,
+                isLoading: true,
+            }
+        case actionTypes.USER_LOG_OUT_SUCCESS:
+            localStorage.removeItem('userInfo');
+            return {
+                ...state,
+                isLoading: false,
+                userId: "",
+                token: "",
+                isLoggedIn: false
+            }
+        case actionTypes.USER_LOG_OUT_FAILURE:
             return {
                 ...state,
                 isLoading: false,

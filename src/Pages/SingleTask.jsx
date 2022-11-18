@@ -19,10 +19,11 @@ const SingleTask = () => {
             dispatch(getOneTaskById(id));
         }
     }, [id]);
+    console.log(oneTask);
 
     return (
         <>
-            {!isLoading &&
+            {(!isLoading && oneTask._id) &&
                 <Row>
                     <ArrowLeftOutlined onClick={() => navigate('/')} style={{ fontSize: "25px", cursor: "pointer", padding: "20px" }} />
                     < Card style={{ width: "50%", margin: " 25px auto" }} title={oneTask.title}>

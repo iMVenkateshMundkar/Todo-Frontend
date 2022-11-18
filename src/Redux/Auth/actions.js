@@ -23,13 +23,26 @@ export const userLogIn = (userInfo) => async (dispatch) => {
         .catch(e => dispatch({ type: actionTypes.USER_LOG_IN_FAILURE }));
 }
 
+export const userLogOut = (userId) => async (dispatch) => {
+    dispatch({ type: actionTypes.USER_LOG_OUT_REQUEST });
+    return await axios({
+        method: 'post',
+        url: `/logout/${userId}`,
+        baseURL: 'http://localhost:3000'
+    }).then(r => dispatch({ type: actionTypes.USER_LOG_OUT_SUCCESS }))
+        .catch(e => dispatch({ type: actionTypes.USER_LOG_OUT_FAILURE }));
+}
+
 export const getUserById = (userId) => async (dispatch) => {
-    console.log(userId);
+    const userData = JSON.parse(localStorage.getItem('userInfo'));
     dispatch({ type: actionTypes.GET_USER_BY_ID_REQUEST });
     return await axios({
         method: 'get',
         url: `/users/${userId}`,
-        baseURL: 'http://localhost:3000'
+        baseURL: 'http://localhost:3000',
+        headers: {
+            "Authorization": `Authorization token is ${userData.token}`,
+        }
     }).then(r => dispatch({ type: actionTypes.GET_USER_BY_ID_SUCCESS, payload: r.data.data }))
         .catch(err => dispatch({ type: actionTypes.GET_USER_BY_ID_FAILURE }));
 }
