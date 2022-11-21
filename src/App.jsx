@@ -15,8 +15,8 @@ function App() {
         <RequireAuth>
           <>
             <Navbar />
-            {/* <Home /> */}
-            <TasksLayout />
+            <Home />
+            {/* <TasksLayout /> */}
           </>
         </RequireAuth>
       } />

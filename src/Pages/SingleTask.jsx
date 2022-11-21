@@ -26,7 +26,7 @@ const SingleTask = () => {
             {(!isLoading && oneTask._id) &&
                 <Row>
                     <ArrowLeftOutlined onClick={() => navigate('/')} style={{ fontSize: "25px", cursor: "pointer", padding: "20px" }} />
-                    < Card style={{ width: "50%", margin: " 25px auto" }} title={oneTask.title}>
+                    < Card style={{ width: "40%", margin: " 55px auto", boxShadow: "5px 8px 24px 5px rgba(208, 216, 243, 0.6)" }} title={oneTask.title}>
                         <p>Description : <span>{oneTask.description}</span></p>
                         <p>Start Date : <span>{oneTask.startDate}</span></p>
                         <p>Expiry Date : <span>{oneTask.expiryDate}</span></p>

@@ -1,4 +1,4 @@
-import { Button, DatePicker, Form, Input, Modal, PageHeader, Space, Table } from 'antd'
+import { Button, Card, Col, DatePicker, Form, Input, Modal, PageHeader, Row, Space, Table } from 'antd'
 import Column from 'antd/lib/table/Column'
 import { PlusCircleOutlined } from '@ant-design/icons'
 import React, { useEffect, useRef, useState } from 'react'
@@ -75,8 +75,10 @@ const Home = () => {
         dispatch(getAllTasks(userId));
     }, [allTasks?.length])
 
+    console.log(allTasks);
+
     return (
-        <div style={{ padding: "50px 150px" }}>
+        <div style={{ padding: "50px 50px" }}>
             <PageHeader
                 className='site-page-header'
                 title='Todo'
@@ -118,13 +120,28 @@ const Home = () => {
                             <Input placeholder='Title of the task' />
                         </Form.Item>
                         <Form.Item
+                            label="Start Date"
+                            name={"startDate"}
+                            initialValue={""}
+                            rules={[{ required: true, message: "Start date is required" }]}
+                        >
+                            <DatePicker disabledDate={(current) => {
+                                if (form.getFieldValue("expiryDate")) {
+                                    form.resetFields(["expiryDate"]);
+                                }
+                                let customDate = new Date();
+                                return current && current < customDate;
+                            }} placeholder='Select start date' style={{ width: "100%" }} />
+                        </Form.Item>
+                        <Form.Item
                             label="Expiry date"
                             name={"expiryDate"}
                             initialValue={""}
+                            value={"12"}
                             rules={[{ required: true, message: "Expiry date is required" }]}
                         >
                             <DatePicker disabledDate={(current) => {
-                                let customDate = new Date();
+                                let customDate = form.getFieldValue("startDate");
                                 return current && current < customDate;
                             }} placeholder='Select expiry date' style={{ width: "100%" }} />
                         </Form.Item>
@@ -142,9 +159,10 @@ const Home = () => {
                     </Space>
                 </Form>
             </Modal>
-            {!isLoading &&
+            {
+                !isLoading &&
                 <>
-                    <Table
+                    {/* <Table
                         dataSource={allTasks}
                     >
                         <Column title="Title" dataIndex="title" key="title" />
@@ -167,7 +185,37 @@ const Home = () => {
                                 navigate(`/tasks/${record._id}`)
                             }
                         }>View</Button>)} />
-                    </Table>
+                    </Table> */}
+                    <Row gutter={[15, 15]}>
+                        {allTasks.map(task => {
+                            return <Col md={{ span: 9 }} lg={{ span: 8 }} xl={{ span: 6 }}>
+                                <Card
+                                    title={task.title}
+                                    style={{ width: "100%", boxShadow: "5px 8px 24px 5px rgba(208, 216, 243, 0.4)", border: "none" }}
+                                    extra={<Button onClick={
+                                        () => {
+                                            navigate(`/tasks/${task._id}`)
+                                        }}>View</Button>}
+                                >
+                                    <p>Description : <span>{task.description}</span></p>
+                                    <p>Start Date : <span>{task.startDate}</span></p>
+                                    <p>Expiry Date : <span>{task.expiryDate}</span></p>
+                                    <Row justify='space-around'>
+                                        <Button onClick={() => {
+                                            console.log("Hello");
+                                            setTaskForUpdate(task);
+                                            setUpdateTask(true);
+                                            console.log(task);
+                                            let expiryDate = new Date(task.expiryDate);
+                                            let startDate = new Date(task.startDate);
+                                            form.setFieldsValue({ description: task.description, title: task.title, expiryDate: moment(expiryDate, "YYYY-MM-DD"), startDate: moment(startDate, "YYYY-MM-DD") });
+                                        }}>Update</Button>
+                                        <Button onClick={() => handleDeleteTask(task._id)}>Delete</Button>
+                                    </Row>
+                                </Card>
+                            </Col>
+                        })}
+                    </Row>
                     <Modal
                         title="Update Task"
                         visible={updateTask}
@@ -202,12 +250,28 @@ const Home = () => {
                                     <Input placeholder='Title of the task' />
                                 </Form.Item>
                                 <Form.Item
+                                    label="Start Date"
+                                    name={"startDate"}
+                                    initialValue={""}
+                                    rules={[{ required: true, message: "Start date is required" }]}
+                                >
+                                    <DatePicker disabledDate={(current) => {
+                                        if (form.getFieldValue("expiryDate")) {
+                                            form.resetFields(["expiryDate"]);
+                                        }
+                                        let customDate = new Date();
+                                        return current && current < customDate;
+                                    }} placeholder='Select start date' style={{ width: "100%" }} />
+                                </Form.Item>
+                                <Form.Item
                                     label="Expiry date"
                                     name={"expiryDate"}
+                                    initialValue={""}
+                                    value={"12"}
                                     rules={[{ required: true, message: "Expiry date is required" }]}
                                 >
                                     <DatePicker disabledDate={(current) => {
-                                        let customDate = new Date();
+                                        let customDate = form.getFieldValue("startDate");
                                         return current && current < customDate;
                                     }} placeholder='Select expiry date' style={{ width: "100%" }} />
                                 </Form.Item>
